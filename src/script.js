@@ -24,7 +24,7 @@ class MovieFinder extends React.Component {
         this.state = {
             searchTerm: '',
             results: [],
-            error: ''
+            error: '',
         }
 
         this.handleChange = this.handleChange.bind(this)
@@ -33,7 +33,7 @@ class MovieFinder extends React.Component {
 
     handleChange(event) {
         this.setState({
-            searchTerm: event.targert.value
+            searchTerm: event.target.value
         })
     }
 
@@ -59,7 +59,7 @@ class MovieFinder extends React.Component {
             .then(json)
             .then(data => {
                 if (data.Response === 'False') {
-                    throw new Error(data.error)
+                    throw new Error(data.Error)
                 }
                 if (data.Response === 'True' && data.Search) {
                     this.setState({results: data.Search, error: '' })
@@ -71,7 +71,7 @@ class MovieFinder extends React.Component {
     }
 
     render() {
-        const { searchTerm, results } = this.state
+        const { searchTerm, results, error } = this.state
 
         return (
             <div className="container">
@@ -86,7 +86,7 @@ class MovieFinder extends React.Component {
                                 return error
                             }
                             return results.map((movie) => {
-                                return <Movie key={imbdID} movie={movie}></Movie>
+                                return <Movie key={movie.imdbID} movie={movie}></Movie>
                             })
                         })()}
                     </div>
