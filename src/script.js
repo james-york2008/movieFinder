@@ -1,3 +1,12 @@
+const checkStatus = (response) => {
+    if (response.ok) {
+        return response
+    }
+    throw new Error('Request was either a 404 or a 500')
+}
+
+const json = (response) => response.json()
+
 const Movie = (props) => {
     const { Title, Year, imdbID, Type, Poster } = props.movie
 
@@ -24,7 +33,7 @@ class MovieFinder extends React.Component {
         this.state = {
             searchTerm: '',
             results: [],
-            error: '',
+            error: ''
         }
 
         this.handleChange = this.handleChange.bind(this)
@@ -45,29 +54,20 @@ class MovieFinder extends React.Component {
             return
         }
         
-        const checkStatus = (response) => {
-            if (response.ok) {
-                return response
+    fetch(`https://www.omdbapi.com/?s=${searchTerm}&apikey=b7da8d63`)
+        .then(checkStatus)
+        .then(json)
+        .then(data => {
+            if (data.Response === 'False') {
+                throw new Error(data.Error)
             }
-            throw new Error('Request was either a 404 or a 500')
-        }
-
-        const json = (response) => response.json()
-
-        fetch(`https://www.omdbapi.com/?s=${searchTerm}&apikey=33192ff3`)
-            .then(checkStatus)
-            .then(json)
-            .then(data => {
-                if (data.Response === 'False') {
-                    throw new Error(data.Error)
-                }
-                if (data.Response === 'True' && data.Search) {
-                    this.setState({results: data.Search, error: '' })
-                }
-            }).catch(error => {
-                this.setState({ error: error.message })
-                console.log(error)
-            })
+            if (data.Response === 'True' && data.Search) {
+                this.setState({results: data.Search, error: '' })
+            }
+        }).catch(error => {
+            this.setState({ error: error.message })
+            console.log(error)
+        })
     }
 
     render() {
